@@ -1,54 +1,143 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <meta name="theme-color" content="#16a34a">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
+
 <title>Mega Kitabevi - Şarkışla Şube</title>
 
 <style>
-body{
+body {
     margin:0;
     font-family:Arial,sans-serif;
     background:#f4f6f9;
+    color:#111827;
 }
-.header{
+
+.header {
     background:#16a34a;
     color:white;
-    text-align:center;
     padding:20px;
+    text-align:center;
+    position:sticky;
+    top:0;
+    z-index:10;
 }
-.title{
+
+.header-title {
     font-size:24px;
     font-weight:bold;
+    margin-bottom:6px;
 }
-.sub{
-    margin-top:6px;
+
+.header-sub {
     font-size:15px;
+    opacity:0.95;
 }
-.content{
-    padding:20px;
-    text-align:center;
-}
-.box{
-    background:white;
-    border-radius:16px;
-    padding:20px;
-    max-width:700px;
+
+.container {
+    max-width:1100px;
     margin:auto;
-    box-shadow:0 2px 10px rgba(0,0,0,0.08);
+    padding:14px;
 }
-.btn{
-    display:inline-block;
-    margin-top:18px;
+
+.title {
+    font-size:18px;
+    font-weight:bold;
+    margin:18px 0 10px;
+}
+
+.filter-list {
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:18px;
+}
+
+.filter-btn {
+    background:white;
+    border:1px solid #d1d5db;
+    padding:10px 14px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:bold;
+    font-size:14px;
+}
+
+.filter-btn.active {
     background:#16a34a;
     color:white;
-    text-decoration:none;
-    padding:12px 18px;
-    border-radius:12px;
+    border-color:#16a34a;
+}
+
+.products-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:14px;
+}
+
+@media(max-width:700px){
+    .products-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+.card {
+    background:white;
+    border-radius:16px;
+    padding:16px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.06);
+}
+
+.badge {
+    display:inline-block;
+    background:#dcfce7;
+    color:#166534;
+    padding:5px 10px;
+    border-radius:999px;
+    font-size:12px;
+    margin-bottom:8px;
+}
+
+.product-title {
+    font-size:18px;
     font-weight:bold;
+    margin-bottom:6px;
+}
+
+.info {
+    color:#6b7280;
+    margin-bottom:12px;
+    font-size:14px;
+}
+
+.btn {
+    display:inline-block;
+    background:#16a34a;
+    color:white;
+    padding:10px 14px;
+    border-radius:10px;
+    text-decoration:none;
+    font-weight:bold;
+    margin-bottom:12px;
+}
+
+.disabled {
+    background:#9ca3af;
+}
+
+.description {
+    background:#f9fafb;
+    border-left:4px solid #16a34a;
+    padding:12px;
+    border-radius:10px;
+    line-height:1.5;
+    font-size:14px;
 }
 </style>
 </head>
@@ -56,23 +145,156 @@ body{
 <body>
 
 <div class="header">
-    <div class="title">Mega Kitabevi - Şarkışla Şube</div>
-    <div class="sub">📚 Yaprak Test İnceleme Sistemi</div>
+    <div class="header-title">Mega Kitabevi - Şarkışla Şube</div>
+    <div class="header-sub">📚 Yaprak Test İnceleme Sistemi</div>
 </div>
 
-<div class="content">
-    <div class="box">
-        <h2>iPhone ve WhatsApp Uyumlu Sistem</h2>
+<div class="container">
 
-        <p>
-        Bu sistem artık PWA desteklidir.
-        iPhone kullanıcıları Safari üzerinden açıp
-        “Ana Ekrana Ekle” diyerek uygulama gibi kullanabilir.
-        </p>
+<div class="title">Dersler</div>
+<div id="dersler" class="filter-list"></div>
 
-        <a class="btn" href="#">Sistem Hazır</a>
-    </div>
+<div class="title">Sınıflar</div>
+<div id="siniflar" class="filter-list"></div>
+
+<div id="urunler" class="products-grid"></div>
+
 </div>
+
+<script>
+
+const data = [{"sinif": "9. Sınıf", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/9-sinif/9-sinif-turk-ve-dili-edebiyati-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Türk Dili Edebiyatı"}, {"sinif": "9. Sınıf", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/9-sinif/9-sinif-matematik-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Matematik"}, {"sinif": "9. Sınıf", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/9-sinif/9-sinif-fizik-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Fizik"}, {"sinif": "9. Sınıf", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/9-sinif/9-sinif-kimya-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Kimya"}, {"sinif": "9. Sınıf", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/9-sinif/9-sinif-biyoloji-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Biyoloji"}, {"sinif": "9. Sınıf", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/9-sinif/9-sinif-tarih-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Tarih"}, {"sinif": "9. Sınıf", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/9-sinif/9-sinif-cografya-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Coğrafya"}, {"sinif": "10. Sınıf", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/10-sinif/10-sinif-turk-ve-dili-edebiyati-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Türk Dili Edebiyatı"}, {"sinif": "10. Sınıf", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/10-sinif/10-sinif-matematik-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Matematik"}, {"sinif": "10. Sınıf", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/10-sinif/10-sinif-fizik-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Fizik"}, {"sinif": "10. Sınıf", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/10-sinif/10-sinif-kimya-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Kimya"}, {"sinif": "10. Sınıf", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/10-sinif/10-sinif-biyoloji-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Biyoloji"}, {"sinif": "10. Sınıf", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/10-sinif/10-sinif-tarih-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Tarih"}, {"sinif": "10. Sınıf", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/10-sinif/10-sinif-cografya-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Coğrafya"}, {"sinif": "10. Sınıf", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/10-sinif/10-sinif-felsefe-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Felsefe"}, {"sinif": "11. Sınıf", "yayin": "VIP", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Türk Dili Edebiyatı"}, {"sinif": "11. Sınıf", "yayin": "VIP", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Matematik"}, {"sinif": "11. Sınıf", "yayin": "VIP", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Fizik"}, {"sinif": "11. Sınıf", "yayin": "VIP", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Kimya"}, {"sinif": "11. Sınıf", "yayin": "VIP", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Biyoloji"}, {"sinif": "11. Sınıf", "yayin": "VIP", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Tarih"}, {"sinif": "11. Sınıf", "yayin": "VIP", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Coğrafya"}, {"sinif": "11. Sınıf", "yayin": "VIP", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Felsefe"}, {"sinif": "Tyt", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/tyt/tyt-turkce-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Türkçe"}, {"sinif": "Tyt", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/tyt/tyt-matematik-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Matematik"}, {"sinif": "Tyt", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/tyt/tyt-geometri-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Geometri"}, {"sinif": "Tyt", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/tyt/tyt-fizik-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Fizik"}, {"sinif": "Tyt", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/tyt/tyt-kimya-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Kimya"}, {"sinif": "Tyt", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/tyt/tyt-biyoloji-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Biyoloji"}, {"sinif": "Tyt", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/tyt/tyt-tarih-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Tarih"}, {"sinif": "Tyt", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/tyt/tyt-cografya-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Coğrafya"}, {"sinif": "Tyt", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/tyt/tyt-felsefe-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Felsefe"}, {"sinif": "Tyt Ayt", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/tyt-ayt/tyt-ayt-geometri-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Geometri"}, {"sinif": "Ayt", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/ayt/ayt-matematik-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Matematik"}, {"sinif": "Ayt", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/ayt/ayt-fizik-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Fizik"}, {"sinif": "Ayt", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/ayt/ayt-kimya-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Kimya"}, {"sinif": "Ayt", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/ayt/ayt-biyoloji-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Biyoloji"}, {"sinif": "Ayt", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/ayt/ayt-edebiyat-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Türk Dili Edebiyatı"}, {"sinif": "Ayt", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/ayt/ayt-tarih-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Tarih"}, {"sinif": "Ayt", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/ayt/ayt-cografya-konu-testi#p=1", "aciklama": "En Son Baskısı", "ders": "Coğrafya"}, {"sinif": "Ayt", "yayin": "VIP", "urun": "", "link": "https://numunekitap.com/vip/ayt/ayt-felsefe-konu-testi#p=1", "aciklama": "en Son Baskısı", "ders": "Coğrafya"}, {"sinif": "Tyt Ayt", "yayin": "4K", "urun": "", "link": "https://app.karakok.net/spShowFlip/1439#p=1", "aciklama": "En Son Baskısı", "ders": "Geometri"}, {"sinif": "Tyt", "yayin": "4K", "urun": "", "link": "https://app.karakok.net/spShowFlip/1438#p=1", "aciklama": "En Son Baskısı", "ders": "Türkçe"}, {"sinif": "Tyt", "yayin": "4K", "urun": "", "link": "https://app.karakok.net/spShowFlip/1437#p=1", "aciklama": "En Son Baskısı", "ders": "Tarih"}, {"sinif": "Tyt", "yayin": "4K", "urun": "", "link": "https://app.karakok.net/spShowFlip/1436#p=1", "aciklama": "En Son Baskısı", "ders": "Matematik"}, {"sinif": "Tyt", "yayin": "4K", "urun": "", "link": "https://app.karakok.net/spShowFlip/1435#p=1", "aciklama": "En Son Baskısı", "ders": "Kimya"}, {"sinif": "Tyt", "yayin": "4K", "urun": "", "link": "https://app.karakok.net/spShowFlip/1434#p=1", "aciklama": "En Son Baskısı", "ders": "Fizik"}, {"sinif": "Tyt", "yayin": "4K", "urun": "", "link": "https://app.karakok.net/spShowFlip/1432#p=1", "aciklama": "En Son Baskısı", "ders": "Coğrafya"}, {"sinif": "Tyt", "yayin": "4K", "urun": "", "link": "https://app.karakok.net/spShowFlip/1431#p=1", "aciklama": "En Son Baskısı", "ders": "Biyoloji"}, {"sinif": "Ayt", "yayin": "4K", "urun": "", "link": "https://app.karakok.net/spShowFlip/1446#p=1", "aciklama": "En Son Baskısı", "ders": "Tarih"}, {"sinif": "Ayt", "yayin": "4K", "urun": "", "link": "https://app.karakok.net/spShowFlip/1445#p=1", "aciklama": "En Son Baskısı", "ders": "Matematik"}, {"sinif": "Ayt", "yayin": "4K", "urun": "", "link": "https://app.karakok.net/spShowFlip/1444#p=1", "aciklama": "En Son Baskısı", "ders": "Kimya"}, {"sinif": "Ayt", "yayin": "4K", "urun": "", "link": "https://app.karakok.net/spShowFlip/1443#p=1", "aciklama": "En Son Baskısı", "ders": "Fizik"}, {"sinif": "Ayt", "yayin": "4K", "urun": "", "link": "https://app.karakok.net/spShowFlip/1442#p=1", "aciklama": "En Son Baskısı", "ders": "Türk Dili Edebiyatı"}, {"sinif": "Ayt", "yayin": "4K", "urun": "", "link": "https://app.karakok.net/spShowFlip/1441#p=1", "aciklama": "En Son Baskısı", "ders": "Coğrafya"}, {"sinif": "Ayt", "yayin": "4K", "urun": "", "link": "https://app.karakok.net/spShowFlip/1440#p=1", "aciklama": "En Son Baskısı", "ders": "Biyoloji"}, {"sinif": "9. Sınıf", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/ppye/", "aciklama": "", "ders": "Matematik"}, {"sinif": "9. Sınıf", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/xgvs/", "aciklama": "", "ders": "Türk Dili Edebiyatı"}, {"sinif": "9. Sınıf", "yayin": "Eksen", "urun": "", "link": "https://fliphtml5.com/bookcase/wgmih", "aciklama": "", "ders": "Fizik"}, {"sinif": "9. Sınıf", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/hjtj/", "aciklama": "", "ders": "Kimya"}, {"sinif": "9. Sınıf", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/bhda/", "aciklama": "", "ders": "Biyoloji"}, {"sinif": "9. Sınıf", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/gmjg/", "aciklama": "", "ders": "Tarih"}, {"sinif": "9. Sınıf", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/wkel/", "aciklama": "", "ders": "Coğrafya"}, {"sinif": "9. Sınıf", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/vjxo/", "aciklama": "", "ders": "Din Kültürü"}, {"sinif": "10. Sınıf", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/wdmu/", "aciklama": "", "ders": "Matematik"}, {"sinif": "10. Sınıf", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/jfbq/", "aciklama": "", "ders": "Türk Dili Edebiyatı"}, {"sinif": "10. Sınıf", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/elwl/", "aciklama": "", "ders": "Fizik"}, {"sinif": "10. Sınıf", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/omgr/", "aciklama": "", "ders": "Kimya"}, {"sinif": "10. Sınıf", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/ibau/", "aciklama": "", "ders": "Biyoloji"}, {"sinif": "10. Sınıf", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/kzzk/", "aciklama": "", "ders": "Tarih"}, {"sinif": "10. Sınıf", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/oxhx/", "aciklama": "", "ders": "Coğrafya"}, {"sinif": "10. Sınıf", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/oqmo/", "aciklama": "", "ders": "Felsefe"}, {"sinif": "10. Sınıf", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/afzd/", "aciklama": "", "ders": "Din Kültürü"}, {"sinif": "11. Sınıf", "yayin": "Eksen", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Matematik"}, {"sinif": "11. Sınıf", "yayin": "Eksen", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Türk Dili Edebiyatı"}, {"sinif": "11. Sınıf", "yayin": "Eksen", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Fizik"}, {"sinif": "11. Sınıf", "yayin": "Eksen", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Kimya"}, {"sinif": "11. Sınıf", "yayin": "Eksen", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Biyoloji"}, {"sinif": "11. Sınıf", "yayin": "Eksen", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Tarih"}, {"sinif": "11. Sınıf", "yayin": "Eksen", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Coğrafya"}, {"sinif": "11. Sınıf", "yayin": "Eksen", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Felsefe"}, {"sinif": "11. Sınıf", "yayin": "Eksen", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Din Kültürü"}, {"sinif": "Tyt", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/eimk/", "aciklama": "En Son Baskısı", "ders": "Matematik"}, {"sinif": "Tyt", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/ndut/", "aciklama": "En Son Baskısı", "ders": "Türkçe"}, {"sinif": "Tyt", "yayin": "Eksen", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "En Son Baskısı", "ders": "Geometri"}, {"sinif": "Tyt", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/avxr/", "aciklama": "En Son Baskısı", "ders": "Fizik"}, {"sinif": "Tyt", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/acpg/", "aciklama": "En Son Baskısı", "ders": "Kimya"}, {"sinif": "Tyt", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/pfpd/", "aciklama": "En Son Baskısı", "ders": "Biyoloji"}, {"sinif": "Tyt Ayt", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/nvrp/", "aciklama": "En Son Baskısı", "ders": "Tarih"}, {"sinif": "Tyt", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/jqir/", "aciklama": "En Son Baskısı", "ders": "Coğrafya"}, {"sinif": "Tyt", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/hvve/", "aciklama": "En Son Baskısı", "ders": "Felsefe"}, {"sinif": "Tyt Ayt", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/zaal/", "aciklama": "En Son Baskısı", "ders": "Din Kültürü"}, {"sinif": "Ayt", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/fllx/", "aciklama": "En Son Baskısı", "ders": "Matematik"}, {"sinif": "Ayt", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/fjcn/", "aciklama": "En Son Baskısı", "ders": "Geometri"}, {"sinif": "Ayt", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/levx/", "aciklama": "En Son Baskısı", "ders": "Fizik"}, {"sinif": "Ayt", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/eftb/", "aciklama": "En Son Baskısı", "ders": "Kimya"}, {"sinif": "Ayt", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/mpuv/", "aciklama": "En Son Baskısı", "ders": "Biyoloji"}, {"sinif": "Ayt", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/mttw/", "aciklama": "En Son Baskısı", "ders": "Türk Dili Edebiyatı"}, {"sinif": "Ayt", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/pczq/", "aciklama": "En Son Baskısı", "ders": "Coğrafya"}, {"sinif": "Ayt", "yayin": "Eksen", "urun": "", "link": "https://online.fliphtml5.com/nzzbi/ohgv/", "aciklama": "En Son Baskısı", "ders": "Felsefe"}, {"sinif": "9. Sınıf", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/qooz/", "aciklama": "Bağlam Temelli Soru Eklenecek - Tam Set Satılyor", "ders": "Matematik"}, {"sinif": "9. Sınıf", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/scjr/", "aciklama": "Bağlam Temelli Soru Eklenecek - Tam Set Satılyor", "ders": "Fizik"}, {"sinif": "9. Sınıf", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/mczf/", "aciklama": "Bağlam Temelli Soru Eklenecek - Tam Set Satılyor", "ders": "Kimya"}, {"sinif": "9. Sınıf", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/jmtx/", "aciklama": "Bağlam Temelli Soru Eklenecek - Tam Set Satılyor", "ders": "Biyoloji"}, {"sinif": "9. Sınıf", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/qjng/", "aciklama": "Bağlam Temelli Soru Eklenecek - Tam Set Satılyor", "ders": "Türk Dili Edebiyatı"}, {"sinif": "9. Sınıf", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/whlz/", "aciklama": "Bağlam Temelli Soru Eklenecek - Tam Set Satılyor", "ders": "Tarih"}, {"sinif": "9. Sınıf", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/irpn/", "aciklama": "Bağlam Temelli Soru Eklenecek - Tam Set Satılyor", "ders": "Coğrafya"}, {"sinif": "10. Sınıf", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/hshj/", "aciklama": "Bağlam Temelli Soru Eklenecek - Tam Set Satılyor", "ders": "Matematik"}, {"sinif": "10. Sınıf", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/mxao/", "aciklama": "Bağlam Temelli Soru Eklenecek - Tam Set Satılyor", "ders": "Fizik"}, {"sinif": "10. Sınıf", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/mhzr/", "aciklama": "Bağlam Temelli Soru Eklenecek - Tam Set Satılyor", "ders": "Kimya"}, {"sinif": "10. Sınıf", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/ppor/", "aciklama": "Bağlam Temelli Soru Eklenecek - Tam Set Satılyor", "ders": "Biyoloji"}, {"sinif": "10. Sınıf", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/ggnl/", "aciklama": "Bağlam Temelli Soru Eklenecek - Tam Set Satılyor", "ders": "Türk Dili Edebiyatı"}, {"sinif": "10. Sınıf", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/osgq/", "aciklama": "Bağlam Temelli Soru Eklenecek - Tam Set Satılyor", "ders": "Tarih"}, {"sinif": "10. Sınıf", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/pxdj/", "aciklama": "Bağlam Temelli Soru Eklenecek - Tam Set Satılyor", "ders": "Coğrafya"}, {"sinif": "11. Sınıf", "yayin": "Limit", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak - Tam Set Satılyor", "ders": "Matematik"}, {"sinif": "11. Sınıf", "yayin": "Limit", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak - Tam Set Satılyor", "ders": "Fizik"}, {"sinif": "11. Sınıf", "yayin": "Limit", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak - Tam Set Satılyor", "ders": "Kimya"}, {"sinif": "11. Sınıf", "yayin": "Limit", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak - Tam Set Satılyor", "ders": "Biyoloji"}, {"sinif": "11. Sınıf", "yayin": "Limit", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak - Tam Set Satılyor", "ders": "Türk Dili Edebiyatı"}, {"sinif": "11. Sınıf", "yayin": "Limit", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak - Tam Set Satılyor", "ders": "Tarih"}, {"sinif": "11. Sınıf", "yayin": "Limit", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak - Tam Set Satılyor", "ders": "Coğrafya"}, {"sinif": "Tyt", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/squp/", "aciklama": "En Son Baskısı", "ders": "Matematik"}, {"sinif": "Tyt", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/fqat/", "aciklama": "En Son Baskısı", "ders": "Türkçe"}, {"sinif": "Tyt Ayt", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/rqmk/", "aciklama": "En Son Baskısı", "ders": "Geometri"}, {"sinif": "Tyt", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/hdin/", "aciklama": "En Son Baskısı", "ders": "Fizik"}, {"sinif": "Tyt", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/hkjg/", "aciklama": "En Son Baskısı", "ders": "Kimya"}, {"sinif": "Tyt Ayt", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/djat/", "aciklama": "En Son Baskısı", "ders": "Biyoloji"}, {"sinif": "Tyt Ayt", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/vqir/", "aciklama": "En Son Baskısı", "ders": "Tarih"}, {"sinif": "Tyt", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/fpqq/", "aciklama": "En Son Baskısı", "ders": "Coğrafya"}, {"sinif": "Tyt", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/mant/", "aciklama": "En Son Baskısı", "ders": "Felsefe"}, {"sinif": "Ayt", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/bnuk/", "aciklama": "En Son Baskısı", "ders": "Matematik"}, {"sinif": "Ayt", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/mtfd/", "aciklama": "En Son Baskısı", "ders": "Fizik"}, {"sinif": "Ayt", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/buqu/", "aciklama": "En Son Baskısı", "ders": "Kimya"}, {"sinif": "Ayt", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/bsmd/", "aciklama": "En Son Baskısı", "ders": "Türk Dili Edebiyatı"}, {"sinif": "Ayt", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/gmus/", "aciklama": "En Son Baskısı", "ders": "Coğrafya"}, {"sinif": "Ayt", "yayin": "Limit", "urun": "", "link": "https://online.fliphtml5.com/cotrr/uauz/", "aciklama": "En Son Baskısı", "ders": "Felsefe"}, {"sinif": "9. Sınıf", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/lmci/", "aciklama": "En Son Baskısı - Bağlam Temelli Soru Var", "ders": "Matematik"}, {"sinif": "9. Sınıf", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/odyx/", "aciklama": "En Son Baskısı - Bağlam Temelli Soru Var", "ders": "Fizik"}, {"sinif": "9. Sınıf", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/guzv/", "aciklama": "En Son Baskısı - Bağlam Temelli Soru Var", "ders": "Kimya"}, {"sinif": "9. Sınıf", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/cgmw/", "aciklama": "En Son Baskısı - Bağlam Temelli Soru Var", "ders": "Biyoloji"}, {"sinif": "9. Sınıf", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/tjko/", "aciklama": "En Son Baskısı - Bağlam Temelli Soru Var", "ders": "Türk Dili Edebiyatı"}, {"sinif": "9. Sınıf", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/zqow/", "aciklama": "En Son Baskısı - Bağlam Temelli Soru Var", "ders": "Tarih"}, {"sinif": "9. Sınıf", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/txvi/", "aciklama": "En Son Baskısı - Bağlam Temelli Soru Var", "ders": "Coğrafya"}, {"sinif": "10. Sınıf", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/10_Snf_Matematik_KD_ORNEK/", "aciklama": "En Son Baskısı - Bağlam Temelli Soru Var", "ders": "Matematik"}, {"sinif": "10. Sınıf", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/mzmu/", "aciklama": "En Son Baskısı - Bağlam Temelli Soru Var", "ders": "Fizik"}, {"sinif": "10. Sınıf", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/10_Snf_Kimya_KD_ORNEK/", "aciklama": "En Son Baskısı - Bağlam Temelli Soru Var", "ders": "Kimya"}, {"sinif": "10. Sınıf", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/10_Biyoloji_KD_ORNEK/", "aciklama": "En Son Baskısı - Bağlam Temelli Soru Var", "ders": "Biyoloji"}, {"sinif": "10. Sınıf", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/10_Snf_TDE_KD_ORNEK/", "aciklama": "En Son Baskısı - Bağlam Temelli Soru Var", "ders": "Türk Dili Edebiyatı"}, {"sinif": "10. Sınıf", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/10_Snf_Tarih_KD_ORNEK/", "aciklama": "En Son Baskısı - Bağlam Temelli Soru Var", "ders": "Tarih"}, {"sinif": "10. Sınıf", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/10_Snf_Cografya_KD_ORNEK/", "aciklama": "En Son Baskısı - Bağlam Temelli Soru Var", "ders": "Coğrafya"}, {"sinif": "11. Sınıf", "yayin": "Hız", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Matematik"}, {"sinif": "11. Sınıf", "yayin": "Hız", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Fizik"}, {"sinif": "11. Sınıf", "yayin": "Hız", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Kimya"}, {"sinif": "11. Sınıf", "yayin": "Hız", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Biyoloji"}, {"sinif": "11. Sınıf", "yayin": "Hız", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Türk Dili Edebiyatı"}, {"sinif": "11. Sınıf", "yayin": "Hız", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Tarih"}, {"sinif": "11. Sınıf", "yayin": "Hız", "urun": "", "link": "Henüz Yayınlanmadı", "aciklama": "Güncel Baskısı Çıkacak", "ders": "Coğrafya"}, {"sinif": "Tyt", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/qpij/", "aciklama": "En Son Baskısı", "ders": "Matematik"}, {"sinif": "Tyt", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/kxgs/", "aciklama": "En Son Baskısı", "ders": "Türkçe"}, {"sinif": "Tyt", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/upcv/", "aciklama": "En Son Baskısı", "ders": "Geometri"}, {"sinif": "Tyt", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/leqb/", "aciklama": "En Son Baskısı", "ders": "Fizik"}, {"sinif": "Tyt", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/gzti/", "aciklama": "En Son Baskısı", "ders": "Kimya"}, {"sinif": "Tyt", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/gwfm/", "aciklama": "En Son Baskısı", "ders": "Biyoloji"}, {"sinif": "Tyt Ayt", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/pbuw/", "aciklama": "En Son Baskısı", "ders": "Tarih"}, {"sinif": "Tyt", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/hszg/", "aciklama": "En Son Baskısı", "ders": "Coğrafya"}, {"sinif": "Tyt", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/dmih/", "aciklama": "En Son Baskısı", "ders": "Felsefe"}, {"sinif": "Ayt", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/nxhn/", "aciklama": "En Son Baskısı", "ders": "Matematik"}, {"sinif": "Ayt", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/yzvi/", "aciklama": "En Son Baskısı", "ders": "Geometri"}, {"sinif": "Ayt", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/ewsw/", "aciklama": "En Son Baskısı", "ders": "Fizik"}, {"sinif": "Ayt", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/shfc/", "aciklama": "En Son Baskısı", "ders": "Kimya"}, {"sinif": "Ayt", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/cfxe/", "aciklama": "En Son Baskısı", "ders": "Biyoloji"}, {"sinif": "Ayt", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/wlrr/", "aciklama": "En Son Baskısı", "ders": "Türk Dili Edebiyatı"}, {"sinif": "Ayt", "yayin": "Hız", "urun": "", "link": "https://book.kitapkitapkitap.com/books/eqft/", "aciklama": "En Son Baskısı", "ders": "Coğrafya"}];
+
+const dersOrder = ["Matematik", "Geometri", "Fizik", "Kimya", "Biyoloji", "Türkçe", "Türk Dili Edebiyatı", "Tarih", "Coğrafya", "Felsefe", "Din Kültürü"];
+
+const derslerDiv = document.getElementById('dersler');
+const siniflarDiv = document.getElementById('siniflar');
+const urunlerDiv = document.getElementById('urunler');
+
+let selectedDers = '';
+let selectedSinif = 'Tümü';
+
+const dersler = dersOrder.filter(d =>
+    data.some(x => x.ders === d)
+);
+
+dersler.forEach(ders => {
+
+    const btn = document.createElement('div');
+    btn.className = 'filter-btn';
+    btn.textContent = ders;
+
+    btn.onclick = () => {
+
+        document.querySelectorAll('#dersler .filter-btn')
+            .forEach(x => x.classList.remove('active'));
+
+        btn.classList.add('active');
+
+        selectedDers = ders;
+        selectedSinif = 'Tümü';
+
+        renderSiniflar();
+        renderUrunler();
+    }
+
+    derslerDiv.appendChild(btn);
+});
+
+function renderSiniflar() {
+
+    siniflarDiv.innerHTML = '';
+
+    const siniflar = [...new Set(
+        data.filter(x => x.ders === selectedDers)
+            .map(x => x.sinif)
+            .filter(Boolean)
+    )].sort();
+
+    const tumuBtn = document.createElement('div');
+    tumuBtn.className = 'filter-btn active';
+    tumuBtn.textContent = 'Tümü';
+
+    tumuBtn.onclick = () => {
+
+        document.querySelectorAll('#siniflar .filter-btn')
+            .forEach(x => x.classList.remove('active'));
+
+        tumuBtn.classList.add('active');
+
+        selectedSinif = 'Tümü';
+        renderUrunler();
+    }
+
+    siniflarDiv.appendChild(tumuBtn);
+
+    siniflar.forEach(sinif => {
+
+        const btn = document.createElement('div');
+        btn.className = 'filter-btn';
+        btn.textContent = sinif;
+
+        btn.onclick = () => {
+
+            document.querySelectorAll('#siniflar .filter-btn')
+                .forEach(x => x.classList.remove('active'));
+
+            btn.classList.add('active');
+
+            selectedSinif = sinif;
+            renderUrunler();
+        }
+
+        siniflarDiv.appendChild(btn);
+    });
+}
+
+function renderUrunler() {
+
+    let filtered = data.filter(x => x.ders === selectedDers);
+
+    if(selectedSinif !== 'Tümü') {
+        filtered = filtered.filter(x => x.sinif === selectedSinif);
+    }
+
+    urunlerDiv.innerHTML = '';
+
+    filtered.forEach(item => {
+
+        const disabled = item.link.includes('Henüz');
+
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        card.innerHTML = `
+            <div class="badge">${item.yayin}</div>
+
+            <div class="product-title">${item.urun}</div>
+
+            <div class="info">${item.sinif}</div>
+
+            ${disabled
+                ? '<span class="btn disabled">Henüz Yayınlanmadı</span>'
+                : `<a class="btn" href="${item.link}" target="_blank">Ürünü İncele</a>`
+            }
+
+            <div class="description">
+                ${item.aciklama || 'Açıklama bulunmuyor.'}
+            </div>
+        `;
+
+        urunlerDiv.appendChild(card);
+    });
+}
+
+window.onload = () => {
+    const first = document.querySelector('#dersler .filter-btn');
+
+    if(first) first.click();
+}
+
+</script>
+
 
 <script>
 if ('serviceWorker' in navigator) {
